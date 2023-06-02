@@ -4,10 +4,20 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import random
 import smtplib
+import os
+
+def leerCredencialesDeCorreo():
+    directorio_actual = os.path.dirname(os.path.abspath(__file__))
+    directorio_padre = os.path.abspath(os.path.join(directorio_actual, os.pardir))
+    archivoCredenciales = os.path.join(directorio_padre, "credenciales.txt")
+    with open(archivoCredenciales, "r") as file:
+        lines = file.readlines()
+        sender_email = lines[0].strip()
+        sender_password = lines[1].strip()
+    return sender_email, sender_password
 
 def send_email():
-    sender_email = "lothanderr@gmail.com"
-    sender_password = ""
+    sender_email, sender_password = leerCredencialesDeCorreo()
     recipient_email = "juanigreco22@gmail.com"
     subject = "HAY TURNOS!"
 
