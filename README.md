@@ -1,5 +1,5 @@
 # Script-turnos
-Antes de ejecutar este script, instalar python, y ejecutar:
+Antes de ejecutar este script, instalar python y geckodriver, y luego ejecutar:
 pip install schedule
 pip install selenium
 
