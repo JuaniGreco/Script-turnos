@@ -1,15 +1,17 @@
-import schedule
-import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import random
 import smtplib
 import os
+from selenium.webdriver.firefox.service import Service
+import time
+from selenium.webdriver.common.by import By
+from email.mime.text import MIMEText
 
 def leerCredencialesDeCorreo():
     directorio_actual = os.path.dirname(os.path.abspath(__file__))
     directorio_padre = os.path.abspath(os.path.join(directorio_actual, os.pardir))
-    archivoCredenciales = os.path.join(directorio_padre, "credenciales.txt")
+    archivoCredenciales = os.path.join(directorio_padre, "credencialesCorreo.txt")
     with open(archivoCredenciales, "r") as file:
         lines = file.readlines()
         sender_email = lines[0].strip()
@@ -20,6 +22,15 @@ def send_email():
     sender_email, sender_password = leerCredencialesDeCorreo()
     recipient_email = "juanigreco22@gmail.com"
     subject = "HAY TURNOS!"
+    body = "https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx \n37.153.076\n1t8bS1d554"
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = ', '.join(recipient_email)
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+        smtp_server.login(sender_email, sender_password)
+        smtp_server.sendmail(sender_email, recipient_email, msg.as_string())
+
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:
         server.starttls()
@@ -29,24 +40,27 @@ def send_email():
         server.close()
 
 def script_turno():
-
-    driver = webdriver.Firefox(executable_path="C:\firefox_webdriver/geckodriver.exe")
+    gecko_driver_path = r"C:\firefox_webdriver\geckodriver.exe"
+    driver = webdriver.Firefox(service=Service(gecko_driver_path))
     driver.get("https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx")
     time.sleep(1)
-    sacarCitaBtn = driver.find_element_by_link_text('SACAR CITA')
+    sacarCitaBtn = driver.find_element(By.CSS_SELECTOR, 'a[href="https://www.citaconsular.es/es/hosteds/widgetdefault/2bc271dfe25b4c2dc909d105a21abff93"]')
     sacarCitaBtn.click()
     time.sleep(1)
-    captchaBtn = driver.find_element_by_id('idCaptchaButton')
-    time.sleep(round(random.uniform(1,3),1))
+    captchaBtn = driver.find_element(By.CSS_SELECTOR, '#idCaptchaButton')
+    time.sleep(round(random.uniform(2,5),1))
     captchaBtn.click()
+    time.sleep(20)
 
-    if "No hay horas disponibles" in driver.page.source:
+    if "No hay horas disponibles" in driver.page_source:
         driver.quit()
     else:
         send_email()
 
-schedule.every(2).minutes.do(script_turno)
+script_turno()
+
+time.sleep(120)
 
 while True:
-    schedule.run_pending()
-    time.sleep(1)
+    script_turno()
+    time.sleep(120)
