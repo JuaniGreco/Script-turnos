@@ -20,7 +20,7 @@ def leerCredencialesDeCorreo():
 
 def send_email():
     sender_email, sender_password = leerCredencialesDeCorreo()
-    recipient_email = "juanigreco22@gmail.com"
+    recipient_email = ["juanigreco22@gmail.com", "delfiigreco@gmail.com", "julietaoldani06@gmail.com"]
     subject = "HAY TURNOS!"
     body = "https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx \n37.153.076\n1t8bS1d554"
     msg = MIMEText(body)
@@ -30,14 +30,6 @@ def send_email():
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
         smtp_server.login(sender_email, sender_password)
         smtp_server.sendmail(sender_email, recipient_email, msg.as_string())
-
-
-    with smtplib.SMTP('smtp.gmail.com', 587) as server:
-        server.starttls()
-        server.login(sender_email, sender_password)
-        message = f"Subject: {subject}\n\n"
-        server.sendmail(sender_email, recipient_email, message)
-        server.close()
 
 def script_turno():
     gecko_driver_path = r"C:\firefox_webdriver\geckodriver.exe"
@@ -53,9 +45,11 @@ def script_turno():
     time.sleep(20)
 
     if "No hay horas disponibles" in driver.page_source:
+        send_email()
         driver.quit()
     else:
         send_email()
+        driver.quit()
 
 script_turno()
 
