@@ -8,6 +8,17 @@ import time
 from selenium.webdriver.common.by import By
 from email.mime.text import MIMEText
 from selenium.webdriver.firefox.options import Options
+import asyncio
+from telethon import TelegramClient
+
+api_id = '17075835'  # Reemplaza con tu API ID
+api_hash = 'a0f97630917186998538863affba32ad'  # Reemplaza con tu API Hash
+group_id = -1001980870514  # Reemplaza con el ID del grupo al que deseas enviar el mensaje
+bot_token = "6131707216:AAFBiwUCjRSmJTY4cWmg2HaU68WyqJRQ2fM"
+
+async def enviar_mensaje():
+    async with TelegramClient('session_name', api_id, api_hash) as client:
+        await client.send_message(group_id, '¡HAY TURNOS! WEB:  https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx')
 
 #Este método lee las credenciales de correo de un txt en la ruta PADRE de este script.
 def leerCredencialesDeCorreo():
@@ -44,7 +55,7 @@ def send_email():
         smtp_server.sendmail(sender_email, recipient_email, msg.as_string())
 
 #Este método chequea si hay turnos, y si hay, envía un mail, sino no.
-def script_turno():
+async def script_turno():
     #Aquí va el path de geckodriver
     gecko_driver_path = r"C:\firefox_webdriver\geckodriver.exe"
     options = Options()
@@ -66,14 +77,17 @@ def script_turno():
     if "No hay horas disponibles" in driver.page_source:
         driver.quit()
     else:
-        send_email()
+        # send_email()
+        await enviar_mensaje()
         driver.quit()
 
 
 
 #Este método ejecuta el script de turno y luego espera 120 segundos.
-script_turno()
+async def run_script_turno():
+    while True:
+        await script_turno()
+        await asyncio.sleep(120)
 
-while True:
-    time.sleep(120)
-    script_turno()
+if __name__ == '__main__':
+    asyncio.run(run_script_turno())
