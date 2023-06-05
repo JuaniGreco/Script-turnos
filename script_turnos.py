@@ -64,7 +64,6 @@ def script_turno():
 
     #Evalúa si en el html de la web encuentra "No hay horas disponibles", si encuentra eso no hace nada y se va del script, sino encuentra, envía un mail.
     if "No hay horas disponibles" in driver.page_source:
-        send_email()
         driver.quit()
     else:
         send_email()
