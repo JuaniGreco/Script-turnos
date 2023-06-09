@@ -59,6 +59,7 @@ async def script_turno():
     #Aquí va el path de geckodriver
     gecko_driver_path = r"C:\firefox_webdriver\geckodriver.exe"
     options = Options()
+    options.add_argument('-headless')
     driver = webdriver.Firefox(service=Service(executable_path=gecko_driver_path), options=options)
     #Acá va el URL base del consulado
     driver.get("https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx")
@@ -71,7 +72,7 @@ async def script_turno():
     captchaBtn = driver.find_element(By.CSS_SELECTOR, '#idCaptchaButton')
     time.sleep(round(random.uniform(1,4),1))
     captchaBtn.click()
-    time.sleep(15)
+    time.sleep(25)
 
     #Evalúa si en el html de la web encuentra "No hay horas disponibles", si encuentra eso no hace nada y se va del script, sino encuentra, envía un mail.
     if "No hay horas disponibles" in driver.page_source:
