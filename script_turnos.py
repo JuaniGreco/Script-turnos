@@ -11,12 +11,13 @@ from selenium.webdriver.firefox.options import Options
 import asyncio
 from telethon import TelegramClient
 
-api_id = '17075835'  # Reemplaza con tu API ID
-api_hash = 'a0f97630917186998538863affba32ad'  # Reemplaza con tu API Hash
-group_id = -1001980870514  # Reemplaza con el ID del grupo al que deseas enviar el mensaje
-bot_token = "6131707216:AAFBiwUCjRSmJTY4cWmg2HaU68WyqJRQ2fM"
+api_id = ''  # Reemplaza con tu API ID
+api_hash = ''  # Reemplaza con tu API Hash
+group_id = 0  # Reemplaza con el ID del grupo al que deseas enviar el mensaje
+bot_token = ""
 
 async def enviar_mensaje():
+    api_id, api_hash, group_id, bot_token = leerVariablesTelegram()
     async with TelegramClient('session_name', api_id, api_hash) as client:
         await client.send_message(group_id, '¡HAY TURNOS! WEB:  https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx')
 
@@ -39,6 +40,18 @@ def leerCorreoParaEnviar():
         lines = file.readlines()
         receiver_emails = [line.strip() for line in lines]
     return receiver_emails
+
+def leerVariablesTelegram():
+    directorio_actual = os.path.dirname(os.path.abspath(__file__))
+    directorio_padre = os.path.abspath(os.path.join(directorio_actual, os.pardir))
+    archivoVariables = os.path.join(directorio_padre, "telegram_bot.txt")
+    with open(archivoVariables, "r") as file:
+        lines = file.readlines()
+        api_id = lines[0].strip()
+        api_hash = lines[1].strip()
+        group_id = int(lines[2].strip())
+        bot_token = lines[3].strip()
+    return api_id, api_hash, group_id, bot_token
 
 #Este método envía un correo electrónico a los usuarios indicados en "recipient_email" usando SMTP.
 def send_email():
