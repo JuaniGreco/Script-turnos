@@ -19,7 +19,7 @@ bot_token = ""
 async def enviar_mensaje():
     api_id, api_hash, group_id, bot_token = leerVariablesTelegram()
     async with TelegramClient('session_name', api_id, api_hash) as client:
-        await client.send_message(group_id, '¡HAY TURNOS! WEB:  https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx')
+        await client.send_message(group_id, '¡HAY TURNOS! WEB:  https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx . Es un bot gratuito que me llevó varios días, si te sirvió si querés podés donarme para que me compre unas cervezas bien frías a juanigreco.uala (ES OPTATIVO).')
 
 #Este método lee las credenciales de correo de un txt en la ruta PADRE de este script.
 def leerCredencialesDeCorreo():
@@ -58,7 +58,7 @@ def send_email():
     sender_email, sender_password = leerCredencialesDeCorreo()
     recipient_email = leerCorreoParaEnviar()
     subject = "HAY TURNOS!"
-    body = "https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx"
+    body = "https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-cita-previa-solicitud-pasaporte.aspx"
     msg = MIMEText(body)
     msg['Subject'] = subject
     msg['From'] = sender_email
@@ -75,10 +75,10 @@ async def script_turno():
     options.add_argument('-headless')
     driver = webdriver.Firefox(service=Service(executable_path=gecko_driver_path), options=options)
     #Acá va el URL base del consulado
-    driver.get("https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-para-solicitar-cita-previa.aspx")
+    driver.get("https://www.exteriores.gob.es/Consulados/rosario/es/Comunicacion/Noticias/Paginas/Articulos/Instrucciones-cita-previa-solicitud-pasaporte.aspx")
     time.sleep(3)
     #Busca hipervínculo SACAR CITA y lo clickea.
-    sacarCitaBtn = driver.find_element(By.CSS_SELECTOR, 'a[href="https://www.citaconsular.es/es/hosteds/widgetdefault/2bc271dfe25b4c2dc909d105a21abff93"]')
+    sacarCitaBtn = driver.find_element(By.CSS_SELECTOR, 'a[href="https://www.citaconsular.es/es/hosteds/widgetdefault/24dc3ade850068f20d7c19845f023121c"]')
     sacarCitaBtn.click()
     time.sleep(3)
     #Busca botón CAPTCHA y lo clickea en un segundo rándom entre 2 y 5 para lograr pasar el captcha.
@@ -91,8 +91,8 @@ async def script_turno():
     if "No hay horas disponibles" in driver.page_source:
         driver.quit()
     else:
-        # send_email()
-        await enviar_mensaje()
+        await send_email()
+        #await enviar_mensaje()
         driver.quit()
 
 
